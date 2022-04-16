@@ -51,12 +51,66 @@ public class MainHRPS {
 				break;
 				
 			case 4: // create reservation & guest
+				guestID++;
+				gList.createGuest();
+				do {
+					System.out.println("Enter your desired room type (Single/Double/Deluxe/VIP)");
+					target_roomType = sc.nextLine();
+					System.out.println("Enter your desired room number");
+					target_roomNumber = sc.nextLine();
+				} while (!roomManager.checkRoomType(target_roomType, target_roomNumber));
+				roomManager.assign(guestID, "Reserved", target_roomNumber, target_roomType);
+				reservation[rCode] = new Reservation(rCode, guestID, target_roomNumber, target_roomType);
+				rCode++;
 				break;
 			case 5:	// update reservation
+				System.out.println("Enter your reservation code");
+				target_rCode = sc.nextInt();
+				sc.nextLine();
+				if (target_rCode > rCode - 1)
+					System.out.println("No such reservation!");
+				else {
+					sub_choice = reservation[target_rCode].checkReservationStatus();
+					if (sub_choice != 1) {
+						do {
+							System.out.println("Which details of reservation you would like to change?");
+							System.out.println("1. About guest details");
+							System.out.println("2. About check in date and time");
+							System.out.println("3. Quit");
+							sub_choice = sc.nextInt();
+							sc.nextLine();
+							switch (sub_choice) {
+							case 1:
+								if (gList.getCount() > 0) {
+									System.out.println("Enter the name of guest to be updated:");
+									String search = sc.nextLine();
+									Guest Search = gList.searchGuest(gList, search);
+									if (Search.getEmpty())
+										System.out.println("Guest does not exist in the database.");
+									else {
+										gList.searchGuest(gList, search).updateGuest();
+									}
+								} else
+									System.out.println("No guest resides in this hotel. Create a new guest to update.");
+								break;
+							case 2:
+								reservation[target_rCode].updateReservation();
+								break;
+							case 3:
+								break;
+							default:
+								System.out.println("Wrong input!");
+							}
+						} while (sub_choice != 3);
+					} else
+						System.out.println("You have been checked in already!");
+				}
 				break;
 			case 6: // remove reservation
+				
 				break;
 			case 7:	// print reservation
+				printDetails(rsv);
 				break;
 				
 			case 8: // create room (?)
